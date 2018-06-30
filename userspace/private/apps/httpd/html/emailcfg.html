@@ -1,0 +1,239 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+var syslogStatus = '<%ejGet(logStatus)%>';
+function btnApplySave() {
+   var loc = 'emailcfg.cgi?';
+
+   with ( document.forms[0] ) {
+     if (enblEmail.checked == true){
+        loc += 'enblEmail=1';
+		if(frmEmail.value == ''){
+			alert("From email address can not be empty.");
+			return;
+		}
+		else if(toEmail.value == ''){
+			alert("To email address can not be empty.");		
+			return;
+		}			
+		else if(smtpAddr.value == ''){
+			alert("SMTP server address can not be empty.");		
+			return;
+		}
+		else if(smtpPort.value == ''){
+			alert("SMTP server port can not be empty.");		
+			return;
+		}
+		else if(smtpAcnt.value == ''){
+			alert("SMTP account can not be empty.");		
+			return;
+		}
+		else if(smtpPwd.value == ''){
+			alert("SMTP password can not be empty.");				
+			return;
+		}
+		else if(intvlTime.value < 0){
+			alert("Interval time should be unsigned integer.");
+			return;
+		}
+		if(onSyslogFullEmail.checked == true)
+			loc += '&onSyslogFullEmail=1';
+		else
+			loc += '&onSyslogFullEmail=0';
+		if(onAuthFail.checked == true)
+			loc += '&onAuthFail=1';
+		else
+			loc += '&onAuthFail=0';
+		loc += '&frmEmail=' + frmEmail.value;
+		loc += '&toEmail='  + toEmail.value;
+		loc += '&smtpAddr=' + smtpAddr.value;
+		loc += '&smtpPort=' + smtpPort.value;
+		loc += '&smtpAcnt=' + smtpAcnt.value;
+		loc += '&smtpPwd='  + smtpPwd.value;
+		loc += '&emailIntvlTm=' + intvlTime.value
+		if(smtpEnableSsl.checked == true)
+			loc += '&smtpEnableSsl=1';
+		else
+			loc += '&smtpEnableSsl=0';
+     }
+     else
+        loc += 'enblEmail=0';
+   }
+   loc += '&sessionKey=<%ejGetOther(sessionKey)%>';
+   var code = 'location="' + loc + '"';
+   eval(code);
+}
+
+function emailSettingAbility(ability) {
+	with ( document.forms[0] ) {
+		
+		if(syslogStatus == '0'){
+			intvlTime.disabled = true;
+			onSyslogFullEmail.disabled = true;
+		}
+		onAuthFail.disabled = ability;
+		frmEmail.disabled = ability;
+		toEmail.disabled = ability;
+		smtpAddr.disabled = ability;
+		smtpPort.disabled = ability;
+		smtpAcnt.disabled = ability;
+		smtpPwd.disabled = ability;
+		smtpEnableSsl.disabled = ability;
+	}
+}
+
+function enblEmailClick() {
+   with ( document.forms[0] ) {
+      if(enblEmail.checked == true)
+	  	emailSettingAbility(false);
+	  else
+	  	emailSettingAbility(true);
+   }
+}
+
+function frmLoad() {
+   with ( document.forms[0] ) {
+      var chkEmail = '<%ejGet(enblEmail)%>';
+      var chkOnSchd = '<%ejGet(onSyslogFullEmail)%>';	 
+	  var chkAuthFail = '<%ejGet(onAuthFail)%>';	  
+	  var chkEnblSsl = '<%ejGet(smtpEnableSsl)%>';
+	  if(chkEnblSsl == 1)
+		  smtpEnableSsl.checked = true;
+	  else
+		  smtpEnableSsl.checked = false;	  
+      if (chkEmail == 1)
+         enblEmail.checked = true;
+      else {
+         enblEmail.checked = false;
+		 enblEmailClick();
+      }
+	  enblEmailClick();
+	  if(syslogStatus == '0'){
+	  	 intvlTime.disabled = true;
+		 onSyslogFullEmail.disabled = true;
+	  }
+      if (chkOnSchd == 1)
+	 	 onSyslogFullEmail.checked = true;
+      else
+         onSyslogFullEmail.checked = false;
+      if (chkAuthFail == 1)
+	 	 onAuthFail.checked = true;
+      else
+         onAuthFail.checked = false;
+
+	  frmEmail.value = '<%ejGet(frmEmail)%>';
+	  toEmail.value = '<%ejGet(toEmail)%>';
+	  smtpAddr.value = '<%ejGet(smtpAddr)%>';
+	  smtpPort.value = '<%ejGet(smtpPort)%>';
+	  smtpAcnt.value = '<%ejGet(smtpAcnt)%>';
+	  smtpPwd.value = '<%ejGet(smtpPwd)%>';
+	  intvlTime.value = '<%ejGet(emailIntvlTm)%>';
+   }
+}
+function btnView() {
+   var options;
+   options = 'menubar=yes,resizable=yes,scrollbars=yes,titlebar=yes,toolbar=no,width=640,height=600';
+
+   window.open('liteview.cmd', 'BCM963xxSysLog', options);
+}
+// done hiding -->
+</script>
+   </head>
+   <body onLoad='frmLoad()'>
+      <blockquote>
+         <form>
+            <P>
+               <b>Email Setting</b><br><br>
+	       The Email feature can be used to send the Lite System Log file and authentication alarm messages to your email address.
+            </P>
+            <table border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td valign="center" align="left">
+                     <input type='checkbox' name='enblEmail' onClick='enblEmailClick()'>&nbsp&nbsp&nbspEnable Email Notification
+                  </td>
+               </tr>
+               
+               <tr>             
+                  <td><br><b>Lite System Log</b>&nbsp&nbsp<input type='button' onClick='btnView()' value='View'></td>
+               </tr>       
+               
+               <tr>
+                  <td>Please make sure the system log is enabled before using this feature. <br></td>
+                  <td><br>&nbsp</td>
+               </tr>
+               <tr>
+                  <td valign="center" align="left">
+                     <input type='checkbox' name='onSyslogFullEmail'>&nbsp&nbsp&nbspOn log full
+                  </td>
+               </tr>
+               <tr>
+                  <td>Interval Time(Set to 0 if no need to send email period):</td>               
+                  <td valign="center" align="left">
+                     <input type='text' name='intvlTime'>seconds</td>
+               </tr>     
+               <tr>
+                  <td><br><b>Authentication Alarm</b></td>
+               </tr>   
+               <tr>
+                  <td>The router will send the email immediately if authentication alarm occurs.<br> </td>
+                  <td><br>&nbsp</td>
+			   </tr> 
+               <tr>
+                  <td valign="center" align="left">
+                     <input type='checkbox' name='onAuthFail'>&nbsp&nbsp&nbsp
+                     On authentication fail</td> 
+               </tr>
+               <tr>
+                  <td><br><b>SMTP setting</b></td>
+               </tr>  		       
+               <tr>
+                  <td>From Email Address:</td>               
+                  <td valign="center" align="left">
+                     <input type='text' name='frmEmail'></td>
+               </tr>
+               <tr>
+                  <td>To Email Address:</td>               
+                  <td valign="center" align="left">
+                     <input type='text' name='toEmail'></td>
+               </tr>  
+               <tr>
+                  <td>SMTP Server Address:</td>               
+                  <td valign="center" align="left">
+                     <input type='text' name='smtpAddr'></td>
+               </tr>  
+               <tr>
+                  <td>SMTP Server Port:</td>               
+                  <td valign="center" align="left">
+                     <input type='text' name='smtpPort'></td>
+               </tr>         
+               <tr>
+                  <td valign="center" align="left">
+                     <input type='checkbox' name='smtpEnableSsl'>&nbsp&nbsp&nbsp
+                     Enable SSL Encryption</td> 
+               </tr>               
+               <tr>
+                  <td>Account:</td>               
+                  <td valign="center" align="left">
+                     <input type='text' name='smtpAcnt'></td>
+               </tr>   
+               <tr>
+                  <td>Password:</td>               
+                  <td valign="center" align="left">
+                     <input type='password' name='smtpPwd'></td>
+               </tr>                  
+            </table>
+            <br>
+            <br>
+            <center>
+               <input type='button' onClick='btnApplySave()' value='Apply/Save'>
+            </center>
+         </form>
+      </blockquote>
+   </body>
+</html>
+

@@ -1,0 +1,14 @@
+#! /bin/sh
+
+PATH=/sbin:/bin
+export PATH
+
+mount -t proc proc /proc
+/bin/mount -a
+
+# << [CTFN-3G-001] MHTsai: Support 3G feature, 2010/08/09
+/bin/mkdir -p /var/lock
+/bin/mkdir -p /var/spool/lock
+# >> [CTFN-3G-001] End
+
+#/sbin/inetd

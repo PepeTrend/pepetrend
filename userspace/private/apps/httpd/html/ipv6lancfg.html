@@ -1,0 +1,953 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+var enblRadvdaemon = '<%ejGetOther(enblRadvd, all)%>';
+var enblDhcps = '<%ejGetOther(enblDhcp6s, all)%>';
+var enblDhcpsStateful = '<%ejGet(enblDhcp6sStateful)%>';
+var IntfIDStart = '<%ejGet(ipv6IntfIDStart)%>';
+var IntfIDEnd = '<%ejGet(ipv6IntfIDEnd)%>';
+//<< [CTFN-IPV6-005] jojopo : Support to configure DHCP option 32 (refresh time) for DHCPv6 server manually , 2011/05/06
+var dhcp6Refresh = '<%ejGet(dhcp6RefreshTime)%>';
+//>> [CTFN-IPV6-005] End
+var dhcp6Lease = '<%ejGet(dhcp6LeasedTime)%>';
+var intfAddress6 = '<%ejGet(lanIntfAddr6)%>';
+// << [CTFN-IPV6-006] jojopo : Support to configure the link local IPv6 address for LAN interface (br0) manually , 2011/05/05
+var llUserMode = '<%ejGet(lanIntfAddr6LinkLocalUserMode)%>';
+var llInterfaceID = '<%ejGet(lanIntfAddr6LinkLocalInterfaceID)%>';
+// >> [CTFN-IPV6-006] End
+//<< [CTFN-IPV6-001] Sheng-Bo: Support IPv6 prefix length up to 64 and IPv6 prefix length relay, 2011/05/05
+var RADVDPrefixLengthRelayEnabled = '<%ejGet(RADVDPrefixLengthRelayEnabled)%>';
+var PrefixLen = '<%ejGetOther(sysInfo, mysitePrefixLen)%>';
+//>> [CTFN-IPV6-001] End
+
+var enblRadvdUla = '<%ejGet(enblRadvdUla)%>';
+var ulaPrefix = '<%ejGet(ipv6UlaPrefix)%>';
+var ulaPlt = '<%ejGet(ipv6UlaPlt)%>';
+var ulaVlt = '<%ejGet(ipv6UlaVlt)%>';
+
+var enblMldSnp = '<%ejGetOther(sysInfo, enblMldSnp)%>';
+var enblMldMode = '<%ejGetOther(sysInfo, enblMldMode)%>';
+
+var enblRandomOrig = '<%ejGet(enblRandomULA)%>';
+
+var enblUlaOrig = enblRadvdUla;
+var nullUlaPrefix = 0;
+
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+var RAintMin ='<%ejGet(RAmin)%>';
+var RAintMax ='<%ejGet(RAmax)%>';
+var ReachableTime ='<%ejGet(ReachTime)%>';
+var DefaultPreference ='<%ejGet(DefaultPreference)%>';
+var radvdMtu ='<%ejGet(radvdMtu)%>';
+var radvdMtuviaRA ='<%ejGet(radvdMtuviaRA)%>';
+var radvdMtuMode ='<%ejGet(RADVDAdvLinkMTUUserMode)%>';
+//>> [CTFN-IPV6-003] end
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+var ManualPrefixEnbl = '<%ejGetOther(ManualPrefix, ManualPrefixEnbl)%>';
+var ManualPrefixIPv6Addr = '<%ejGetOther(ManualPrefix, ManualPrefixIPv6Addr)%>';
+var ManualPrefixLength = '<%ejGetOther(ManualPrefix, ManualPrefixLength)%>';
+var ManualPreferredtime = '<%ejGetOther(ManualPrefix, ManualPreferredtime)%>';
+var ManualValidtime = '<%ejGetOther(ManualPrefix, ManualValidtime)%>';
+//>> [CTFN-IPV6-007] end
+
+function hideMldSnpInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('mldSnpInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.mldSnpInfo.style.visibility = status;
+   }
+}
+
+function hideDhcpInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('dhcpInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.dhcpInfo.style.visibility = status;
+   }
+}
+
+function configStatelessDhcp6s() {
+   with ( document.forms[0] ) {
+      dhcpSrv6Type[1].checked = false;
+      ipv6IntfIDStart.disabled = 1;
+      ipv6IntfIDEnd.disabled = 1;
+      ipv6IntfIDStart.value = IntfIDStart;
+      ipv6IntfIDEnd.value = IntfIDEnd;
+      dhcp6LeasedTime.disabled = 1;
+//<< [CTFN-IPV6-005] jojopo : Support to configure DHCP option 32 (refresh time) for DHCPv6 server manually , 2011/05/06
+      dhcp6RefreshTime.disabled = 0;
+      dhcp6RefreshTime.value = dhcp6Refresh;
+//>> [CTFN-IPV6-005] End	  
+   }
+}
+
+function configStatefulDhcp6s() {
+   with ( document.forms[0] ) {
+      dhcpSrv6Type[1].checked = true;
+      ipv6IntfIDStart.disabled = 0;
+      ipv6IntfIDEnd.disabled = 0;
+      dhcp6LeasedTime.disabled = 0;
+      ipv6IntfIDStart.value = IntfIDStart;
+      ipv6IntfIDEnd.value = IntfIDEnd;
+      dhcp6LeasedTime.value = dhcp6Lease;
+//<< [CTFN-IPV6-005] jojopo : Support to configure DHCP option 32 (refresh time) for DHCPv6 server manually , 2011/05/06
+      dhcp6RefreshTime.disabled = 1;
+      dhcp6RefreshTime.value = dhcp6Refresh;
+//>> [CTFN-IPV6-005] End	  
+   }
+}
+
+function configRadvdUla(parm) {
+   with ( document.forms[0] ) {
+      if ( parm == 1 )
+      {
+         enableRadvdUla.checked = true;
+         RandomUla.disable = 0;
+
+         if ( enblRandomOrig == '1' )
+         {
+            RandomUla[0].checked = true;
+            RandomUla[1].checked = false;
+            ipv6UlaPrefix.disabled = 1;
+            ipv6UlaPlt.disabled = 1;
+            ipv6UlaVlt.disabled = 1;
+         }
+         else
+         {
+            RandomUla[0].checked = false;
+            RandomUla[1].checked = true;
+            ipv6UlaPrefix.disabled = 0;
+            ipv6UlaPlt.disabled = 0;
+            ipv6UlaVlt.disabled = 0;
+         }
+      }
+      else
+      {
+         enableRadvdUla.checked = false;
+         RandomUla[0].disable = 1;
+         RandomUla[1].disable = 1;
+         ipv6UlaPrefix.disabled = 1;
+         ipv6UlaPlt.disabled = 1;
+         ipv6UlaVlt.disabled = 1;
+      }
+
+      ipv6UlaPrefix.value = ulaPrefix;
+      ipv6UlaPlt.value = ulaPlt;
+      ipv6UlaVlt.value = ulaVlt;
+   }
+}
+
+function typeClick() {
+   with ( document.forms[0] ) {
+      if ( dhcpSrv6Type[0].checked == true ) {
+         configStatelessDhcp6s();
+      } else {
+         configStatefulDhcp6s();
+      }
+   }
+}
+
+// << [CTFN-IPV6-006] jojopo : Support to configure the link local IPv6 address for LAN interface (br0) manually , 2011/05/05
+function configLinkLocalEUI64() {
+   with ( document.forms[0] ) {
+      intfAddrLinkLocalUserMode[0].checked = true;
+      intfAddrLinkLocalUserMode[1].checked = false;
+      intfAddrLinkLocalID.disabled = 1;
+      intfAddrLinkLocalID.value = llInterfaceID;
+   }
+}
+
+function configLinkLocalUserMode() {
+   with ( document.forms[0] ) {
+      intfAddrLinkLocalUserMode[0].checked = false;
+      intfAddrLinkLocalUserMode[1].checked = true;
+      intfAddrLinkLocalID.disabled = 0;
+      intfAddrLinkLocalID.value = llInterfaceID;
+   }
+}
+
+function LinkLocaltypeClick() {
+   with ( document.forms[0] ) {
+      if ( intfAddrLinkLocalUserMode[0].checked == true ) {
+         configLinkLocalEUI64();
+      } else {
+         configLinkLocalUserMode();
+      }
+   }
+}
+// >> [CTFN-IPV6-006] End
+
+function MldClick() {
+}
+
+function radvdClick(cb) {
+   if (cb.checked == true)
+      hideRadvdUlaInfo(0);
+   else
+      hideRadvdUlaInfo(1);
+}
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+function hideRadvdInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('RadvdInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.RadvdInfo.style.visibility = status;
+   }
+}
+//>> [CTFN-IPV6-003] end
+
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+String.prototype.RCompareTo = function(mvarCompareTo){
+   if(!mvarCompareTo) 
+      return undefined;
+   if(this==mvarCompareTo) 
+      return "=";
+   if(isNaN(parseFloat(this))||isNaN(parseFloat(mvarCompareTo)))
+      return (this>mvarCompareTo?">":"<");
+   else
+      return (parseFloat(this)>parseFloat(mvarCompareTo)?">":"<");
+}
+
+function prefixClick(cb) {
+   if (cb.checked == true)
+      hidePrefixInfo(0);
+   else
+      hidePrefixInfo(1);
+}
+
+function hidePrefixInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('PrefixInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.PrefixInfo.style.visibility = status;
+   }
+}
+
+function hideenblRADVDInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('enblRADVDInfo').style.visibility = status;
+   else 
+   {
+      if (document.layers == false) // IE4
+         document.all.enblRADVDInfo.style.visibility = status;
+   }
+}
+//>> [CTFN-IPV6-007] end
+
+function radvdClick(cb) {
+   if (cb.checked == true){
+      hideRadvdUlaInfo(0);
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+      hideRadvdInfo(0);
+//>> [CTFN-IPV6-003] end
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+      hideenblRADVDInfo(0);
+      if(ManualPrefixEnbl == '1')
+         hidePrefixInfo(0);
+      else
+         hidePrefixInfo(1);
+//>> [CTFN-IPV6-007] end
+}
+   else{
+      hideRadvdUlaInfo(1);
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+      hideRadvdInfo(1);
+//>> [CTFN-IPV6-003] end
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+      hideenblRADVDInfo(1);
+      hidePrefixInfo(1);
+//>> [CTFN-IPV6-007] end
+}
+}
+
+function radvdUlaClick(cb) {
+   if (cb.checked == true)
+      configRadvdUla(1);
+   else
+      configRadvdUla(0);
+}
+
+function UlatypeClick() {
+   with ( document.forms[0] ) {
+      ipv6UlaPrefix.value = ulaPrefix;
+      ipv6UlaPlt.value = ulaPlt;
+      ipv6UlaVlt.value = ulaVlt;
+
+      if ( RandomUla[0].checked == true ) {
+         RandomUla[1].checked = false;
+         ipv6UlaPrefix.disabled = 1;
+         ipv6UlaPlt.disabled = 1;
+         ipv6UlaVlt.disabled = 1;
+      } else {
+         RandomUla[1].checked = true;
+         ipv6UlaPrefix.disabled = 0;
+         ipv6UlaPlt.disabled = 0;
+         ipv6UlaVlt.disabled = 0;
+      }
+   }
+}
+
+function hideRadvdUlaInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('radvdUlaInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.radvdUlaInfo.style.visibility = status;
+   }
+}
+
+function dhcp6sClick(cb) {
+   if (cb.checked == true)
+      hideStatefulInfo(0)
+   else
+      hideStatefulInfo(1);
+}
+
+function hideMldSnpInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('mldSnpInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.mldSnpInfo.style.visibility = status;
+   }
+}
+
+function hideStatefulInfo(hide) {
+   var status = 'visible';
+
+   if ( hide == 1 )
+      status = 'hidden';
+   if (document.getElementById)  // DOM3 = IE5, NS6
+      document.getElementById('statefulInfo').style.visibility = status;
+   else {
+      if (document.layers == false) // IE4
+         document.all.statefulInfo.style.visibility = status;
+   }
+}
+
+function mldClick(cb) {
+   if (cb.checked == true)
+      hideMldSnpInfo(0)
+   else
+      hideMldSnpInfo(1);
+}
+
+function btnApply() {
+   var loc = 'ipv6lancfg.cmd?action=savapply';
+
+   with ( document.forms[0] ) {
+      if ( (intfAddr.value != '') && (intfAddr.value.indexOf('/') == -1) ) {
+         alert('Address must configure with network prefix length');
+         return;
+      }
+
+      if ( (RandomUla[1].checked == true) && (ipv6UlaPrefix.value == '') ) {
+         alert('Please configure ULA prefix information');
+         return;
+      }
+
+      if (enableRadvd.checked == true)
+     {
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+		 var reachtime_temp=ReachTimeVal.value;
+		 var ramax_temp=RAintervalMax.value;
+		 var dftperference = DefaultPreferenceVal.options[DefaultPreferenceVal.selectedIndex].value;
+		 if(reachtime_temp>=0 && reachtime_temp<=3600000)
+			loc += '&ReachTime=' + reachtime_temp;
+		 else {
+		 	alert('Reach time can only set to 0-3600000 ms.');
+			return;
+		 }
+		 if (RAintervalMin.value>=3 && RAintervalMin.value<=(ramax_temp*3/4))
+		  	 loc += '&RAmin=' + RAintervalMin.value;
+		 else {
+		 	alert('Ra interval min can only set to 3-'+(ramax_temp*3/4)+' sec.');
+			return;
+		 }
+ 		 if (RAintervalMax.value>=4 && RAintervalMax.value<=1800)
+ 		  	 loc += '&RAmax=' + RAintervalMax.value;
+		 else {
+		 	alert('Ra interval max can only set to 4-1800 sec.');
+			return;
+		 }
+	  	 // DefaultPreference
+	  	 if(dftperference == 0)
+			loc += '&DefaultPreference=low';
+	  	 else if(dftperference == 1)
+			loc += '&DefaultPreference=medium';
+	  	 else if(dftperference == 2)
+			loc += '&DefaultPreference=high';
+	  	 // MTU
+         if (raMtu.value >= 1280 && raMtu.value <= 1500)
+            loc += '&radvdMtu=' + raMtu.value;
+         else {
+            alert('Radvd MTU valid range is 1280-1500.');
+            return;
+         }
+         if ( RADVDAdvLinkMTUUserMode.checked == true )
+            loc += '&RADVDAdvLinkMTUUserMode=1';
+         else
+            loc += '&RADVDAdvLinkMTUUserMode=0';
+//>> [CTFN-IPV6-003] end
+         loc += '&enblRadvd=1';
+      }
+      else
+      {
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+      	 loc += '&RAmin=' + RAintMin;
+		 loc += '&RAmax=' + RAintMax;
+		 loc += '&ReachTime=' + ReachableTime;
+		 loc += '&DefaultPreference=' + DefaultPreference;
+		 loc += '&radvdMtu=' + radvdMtu;
+		 loc += '&RADVDAdvLinkMTUUserMode=' + radvdMtuMode;
+//>> [CTFN-IPV6-003] end
+         loc += '&enblRadvd=0';
+      }
+
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+	  if (enablePrefix.checked == true)
+	  {
+	  	var a=prefixPreferred.value;
+		var b=prefixValid.value;
+		loc += '&ManualPrefixEnbl=1';
+		loc += '&ManualPrefixIPv6Addr=' + prefixIPv6Addr.value;
+		if (prefixLength.value <= 64 && prefixLength.value >= 16)
+			loc += '&ManualPrefixLength=' + prefixLength.value;
+		else
+		{
+	    	alert('Prefix Length valid range is 16-64.');
+	    	return;
+		}
+		if (prefixPreferred.value <= 604800 && prefixPreferred.value >= 600)
+			loc += '&ManualPreferredtime=' + prefixPreferred.value;
+		else
+		{
+	    	alert('Preferred Lifetime valid range is 600-604800(s).');
+	    	return;
+		}
+		if (prefixValid.value <= 604800 && prefixValid.value >= 600)
+			loc += '&ManualValidtime=' + prefixValid.value;
+		else
+		{
+	    	alert('Valid Lifetime valid range is 600-604800(s).');
+	    	return;
+		}
+		if(a.RCompareTo(b) == ">"){	// preferred life time > valid life time
+     		alert('Valid Lifetime can not less then Preferred Lifetime');
+	    	return;
+    		
+  		}
+	  }
+	  else
+	  {
+		loc += '&ManualPrefixEnbl=0';
+		loc += '&ManualPrefixIPv6Addr=' + ManualPrefixIPv6Addr;
+		loc += '&ManualPrefixLength=' + ManualPrefixLength;
+		loc += '&ManualPreferredtime=' + ManualPreferredtime;
+		loc += '&ManualValidtime=' + ManualValidtime;
+	  }
+//>> [CTFN-IPV6-007] end
+
+      if (enableDhcp6s.checked == true) {
+         loc += '&enblDhcp6s=1';
+      }
+      else {
+         loc += '&enblDhcp6s=0';
+      }
+
+      if (enableRadvdUla.checked == true)
+         loc += '&enblRadvdUla=1';
+      else
+         loc += '&enblRadvdUla=0';
+
+      if (dhcpSrv6Type[0].checked == true)
+      {
+         loc += '&enblDhcp6sStateful=0';
+      }
+      else
+      {
+         loc += '&enblDhcp6sStateful=1';
+      }
+
+      loc += '&ipv6IntfIDStart=' + ipv6IntfIDStart.value;
+      loc += '&ipv6IntfIDEnd=' + ipv6IntfIDEnd.value;
+      loc += '&dhcp6LeasedTime=' + dhcp6LeasedTime.value;
+      loc += '&lanIntfAddr6=' + intfAddr.value;
+//<< [CTFN-IPV6-005] jojopo : Support to configure DHCP option 32 (refresh time) for DHCPv6 server manually , 2011/05/06
+    loc += '&dhcp6RefreshTime=' + dhcp6RefreshTime.value;
+
+    if(isNaN(dhcp6RefreshTime.value) == true)
+    {
+       alert('DHCPv6 Refresh Time invalid.');
+       return;
+    }
+    if((dhcp6RefreshTime.value < 600) || (dhcp6RefreshTime.value > 259200))
+    {
+       alert('DHCPv6 Refresh Time must between 600 and 259200.');
+       return;
+    }
+//>> [CTFN-IPV6-005] End
+      if ( ((enblUlaOrig=='1') && (enableRadvdUla.checked != true)) ||
+           ((enblUlaOrig=='0') && (enableRadvdUla.checked == true)) )
+      {
+         if ( ((enblUlaOrig == '1') && (enableRadvdUla.checked == false) && (enblRandomOrig == '1')) )
+         {
+            nullUlaPrefix = 1;
+         }
+      }
+
+      if ( (enblRandomOrig == '0') && (RandomUla[0].checked == true) )
+      {
+         nullUlaPrefix = 1;
+      }
+
+      if ( RandomUla[0].checked == true )
+      {
+         loc += '&ipv6UlaRandom=1';
+      }
+      else
+      {
+         loc += '&ipv6UlaRandom=0';
+      }
+
+      if ( nullUlaPrefix == 0 )
+         loc += '&ipv6UlaPrefix=' + ipv6UlaPrefix.value;
+      else
+         loc += '&ipv6UlaPrefix=';
+
+      loc += '&ipv6UlaPlt=' + ipv6UlaPlt.value;
+      loc += '&ipv6UlaVlt=' + ipv6UlaVlt.value;
+
+     if ( chkMldSnp.checked == true )
+        loc += '&enblMldSnp=1';
+     else
+        loc += '&enblMldSnp=0';
+
+     if ( mldMode[1].checked == true )
+        loc += '&enblMldMode=1';
+     else
+        loc += '&enblMldMode=0';
+
+// << [CTFN-IPV6-006] jojopo : Support to configure the link local IPv6 address for LAN interface (br0) manually , 2011/05/05
+     if ( intfAddrLinkLocalUserMode[0].checked == true)
+        loc += '&lanIntfAddr6LinkLocalUserMode=0';
+     else
+        loc += '&lanIntfAddr6LinkLocalUserMode=1';
+
+     loc += '&lanIntfAddr6LinkLocalInterfaceID=' + intfAddrLinkLocalID.value;
+// >> [CTFN-IPV6-006] End
+
+
+//<< [CTFN-IPV6-001] Sheng-Bo: Support IPv6 prefix length up to 64 and IPv6 prefix length relay, 2011/05/05
+    if(PDLenRelayEnabled.checked == true)
+       loc += '&RADVDPrefixLengthRelayEnabled=1';
+	else
+       loc += '&RADVDPrefixLengthRelayEnabled=0';
+//>> [CTFN-IPV6-001] End       
+   }
+   loc += '&sessionKey=<%ejGetOther(sessionKey)%>';
+   var code = 'location="' + loc + '"';
+   eval(code);
+}
+
+
+function frmLoad() {
+
+   with ( document.forms[0] ) {
+      enableRadvd.checked = false;
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+	  hideRadvdInfo(1);
+//>> [CTFN-IPV6-003] end
+
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+	  hideenblRADVDInfo(1);
+	  hidePrefixInfo(1);
+//>> [CTFN-IPV6-007] end
+
+      if (enblRadvdaemon == '1') {
+         enableRadvd.checked = true;
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+		 hideRadvdInfo(0);
+//>> [CTFN-IPV6-003] end
+
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+      hideenblRADVDInfo(0);
+//>> [CTFN-IPV6-007] end
+
+         hideRadvdUlaInfo(0);
+
+         if ( enblRadvdUla == '1' )
+            configRadvdUla(1);
+         else
+            configRadvdUla(0);
+
+      } else {
+         enableRadvd.checked = false;
+         hideRadvdUlaInfo(1);
+      }
+//<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02
+	  RAintervalMin.value=RAintMin;
+	  RAintervalMax.value=RAintMax;
+	  ReachTimeVal.value=ReachableTime;
+	  if(DefaultPreference == 'low')
+		tmp_dftPerference_idx = 0;
+	  else if(DefaultPreference == 'medium')
+		tmp_dftPerference_idx = 1;
+	  else if(DefaultPreference == 'high')
+		tmp_dftPerference_idx = 2;
+	  for(i=0; i< DefaultPreferenceVal.options.length; i++) 
+	  {
+      	if (DefaultPreferenceVal.options[i].value == tmp_dftPerference_idx) 
+		{
+         	DefaultPreferenceVal.options[i].selected = true;
+         	break;
+      	}
+      }
+	  raMtu.value = radvdMtu;
+      if(radvdMtuMode == '1') RADVDAdvLinkMTUUserMode.checked = true;
+//>> [CTFN-IPV6-003] end
+
+//<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06
+	  prefixIPv6Addr.value = ManualPrefixIPv6Addr;
+	  prefixLength.value = ManualPrefixLength;
+	  prefixPreferred.value = ManualPreferredtime;
+	  prefixValid.value = ManualValidtime;
+	  if(ManualPrefixEnbl == '1')
+	  {
+	  	enablePrefix.checked = true;
+		if (enblRadvdaemon == '1')
+			hidePrefixInfo(0);
+	  }
+	  else
+	  	enablePrefix.checked = false;
+//>> [CTFN-IPV6-007] end
+
+// << [CTFN-IPV6-006] jojopo : Support to configure the link local IPv6 address for LAN interface (br0) manually , 2011/05/05
+      if (llUserMode == '0') {
+         configLinkLocalEUI64();
+      }
+      else {
+         configLinkLocalUserMode();
+      }
+// >> [CTFN-IPV6-006] End
+
+//<< [CTFN-IPV6-001] Sheng-Bo: Support IPv6 prefix length up to 64 and IPv6 prefix length relay, 2011/05/05
+      if(RADVDPrefixLengthRelayEnabled == '1')
+      {
+         PDLenRelayEnabled.checked = true;
+      }
+//>> [CTFN-IPV6-001] End
+      intfAddr.value = intfAddress6;
+      enableDhcp6s.checked = false;
+      
+      if (enblDhcps == '1') {
+         enableDhcp6s.checked = true;
+         hideStatefulInfo(0);
+
+         if ( enblDhcpsStateful == '1' ) {
+            configStatefulDhcp6s(1);
+         } else {
+            dhcpSrv6Type[0].checked = true;
+            configStatelessDhcp6s();
+         }
+
+      } else {
+         enableDhcp6s.checked = false;
+         hideStatefulInfo(1);
+      }
+
+      if ( enblMldSnp == '1' ) {
+        chkMldSnp.checked = true;
+        hideMldSnpInfo(0);
+      } else {
+        chkMldSnp.checked = false;
+        hideMldSnpInfo(1);
+      }
+
+      if ( enblMldMode == '1' ) {
+    	mldMode[0].checked = false;
+    	mldMode[1].checked = true;
+      } else {
+        mldMode[0].checked = true;
+        mldMode[1].checked = false;
+      }
+   }
+}
+
+// done hiding -->
+</script>
+   </head>
+   <body onLoad='frmLoad()'>
+      <blockquote>
+         <form>
+            <P>
+               <b>IPv6 LAN Auto Configuration</b><br>
+               Note: Stateful DHCPv6 is supported based on the assumption of prefix length less than 64. 
+               Interface ID does NOT support ZERO COMPRESSION "::". Please enter the complete information.
+               For exampe: Please enter "0:0:0:2" instead of "::2".<br>
+            </P>
+
+<!-- << jojopo : [CTFN-IPV6-006] jojopo : Support to configure the link local IPv6 address for LAN interface (br0) manually , 2011/05/05 -->
+            <tr>
+               <b>LAN IPv6 Link-Local Address Configuration</b>
+            </tr>
+            <table border='0' cellpadding='0' cellspacing='0'>
+               <tr>
+                  <td colspan="2"><input type='radio' name='intfAddrLinkLocalUserMode' onClick='LinkLocaltypeClick()'>&nbsp;&nbsp;EUI-64</td>
+                  </tr>
+               <tr>
+
+               <td colspan="2"><input type='radio' name='intfAddrLinkLocalUserMode' onClick='LinkLocaltypeClick()'>&nbsp;&nbsp;User Setting</td>
+               </tr>
+
+               <td>Interface Identifier:</td>
+               <td><input type='text' name='intfAddrLinkLocalID'></td>
+
+            </table><br>
+<!-- >> [CTFN-IPV6-006] End -->
+
+            <table border='0' cellpadding='0' cellspacing='0'>
+               <tr>
+                  <b>Static LAN IPv6 Address Configuration</b>
+               </tr>
+               <tr>
+                  <td>Interface Address (prefix length is required):</td>
+                  <td><input type='text' name='intfAddr'></td>
+               </tr>
+            </table><br>
+
+            <tr>
+               <b>IPv6 LAN Applications</b>
+            </tr>
+            <table border='0' cellpadding='0' cellspacing='0'>
+               <tr>
+                  <td valign='center' align='middle' colspan='2' width='30' height='30'>
+                     <input type='checkbox' name='enableDhcp6s' onClick='dhcp6sClick(this)'></td>
+                  <td colspan='2'>Enable DHCPv6 Server</td>
+               </tr>
+            </table>
+
+            <div id='statefulInfo'>
+            <table border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                     <td colspan="2"><input type='radio' name='dhcpSrv6Type' onClick='typeClick()'>&nbsp;&nbsp;Stateless</td>
+                  </tr>
+<!-- //<< [CTFN-IPV6-005] jojopo : Support to configure DHCP option 32 (refresh time) for DHCPv6 server manually , 2011/05/06 -->
+                  <tr>
+                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Refresh Time (sec):</td>
+                     <td><input type='text' name='dhcp6RefreshTime'></td>
+                  </tr>
+<!-- //>> [CTFN-IPV6-005] End -->                  
+                  <tr>
+                     <td colspan="2"><input type='radio' name='dhcpSrv6Type' onClick='typeClick()'>&nbsp;&nbsp;Stateful</td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start interface ID:</td>
+                     <td><input type='text' name='ipv6IntfIDStart'></td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End interface ID:</td>
+                     <td><input type='text' name='ipv6IntfIDEnd'></td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leased Time (hour):</td>
+                     <td><input type='text' name='dhcp6LeasedTime'></td>
+                  </tr>
+            </table>
+            <br>
+            </div>
+
+            <table border='0' cellpadding='0' cellspacing='0'>
+               <tr>
+                  <td valign='center' align='middle' colspan='2' width='30' height='30'>
+                     <input type='checkbox' name='enableRadvd' onClick='radvdClick(this)'></td>
+                  <td colspan='2'>Enable RADVD</td>
+               </tr>
+            </table>
+<!-- //<< [CTFN-IPV6-003] Alex Wang : Enhanced RADVD to support more settings, 2011/05/02 -->
+            <div id='RadvdInfo'>
+            <table border='0' cellpadding='0' cellspacing='0'>
+               <tr>
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RA interval Min(sec):</td>					
+                  <td><input type='text' name='RAintervalMin'></td>
+               </tr>
+               <tr>
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RA interval Max(sec):</td>
+                  <td><input type='text' name='RAintervalMax'></td>
+               </tr>
+               <tr>						
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reachable Time(ms):</td>
+                  <td><input type='text' name='ReachTimeVal'></td>
+               </tr>
+               <tr><script language="javascript">
+               <!-- hide 
+               {
+                  document.writeln("<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default Preference:</td>");
+                  document.writeln("<td><select name='DefaultPreferenceVal' size='1'>");
+                  document.writeln("      <option value='0'>Low");
+                  document.writeln("      <option value='1'>Medium");
+                  document.writeln("      <option value='2'>High");
+                  document.writeln("    </select></td>");
+               }
+               // done hiding -->
+               </script>
+               </tr>
+               <tr>
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='RADVDAdvLinkMTUUserMode'> MTU (bytes):</td>
+                  <td><input type='text' name='raMtu'></td>
+               </tr>
+<!-- //<< [CTFN-IPV6-001] Sheng-Bo: Support IPv6 prefix length up to 64 and IPv6 prefix length relay, 2011/05/05 -->
+                <tr>
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='PDLenRelayEnabled'> Enable Prefix Length Relay
+                      <script language="javascript">
+                      if(PrefixLen != '&nbsp')
+                      {
+                         document.writeln("(from WAN:<%ejGetOther(sysInfo, mysitePrefixLen)%>)");
+                      }
+                      </script>
+		 		 </td>
+                </tr>
+<!-- //>> [CTFN-IPV6-001] End -->                
+            </table>			
+			</div>
+			<br>
+<!-- //>> [CTFN-IPV6-003] end -->
+<!-- //<< [CTFN-IPV6-007] Alex Wang : Support to configure IPv6 prefix manually, 2011/05/06 -->
+			<div id='enblRADVDInfo'>
+            <table border='0' cellpadding='0' cellspacing='0'>
+               <tr>
+                  <td valign='center' align='middle' colspan='2' width='30' height='30'>
+                     <input type='checkbox' name='enablePrefix' onClick='prefixClick(this)'></td>
+                  <td colspan='2'>Enable Configuration Mode</td>
+               </tr>
+            </table>
+            </div>
+            <div id='PrefixInfo'>
+            <table border='0' cellpadding='0' cellspacing='0'>
+				<tr>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prefix:</td>					
+					<td><input type='text' name='prefixIPv6Addr'></td>
+					<td>&nbsp;ex: xxxx:xxxx:xxxx:xxxx</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prefix Length:</td>					
+					<td><input type='text' name='prefixLength'></td>
+					<td>&nbsp;[16-64]</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preferred Lifetime:</td>					
+					<td><input type='text' name='prefixPreferred'></td>
+					<td>&nbsp;[600-604800 S]</td>
+				</tr>
+				<tr>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Valid Lifetime:</td>					
+					<td><input type='text' name='prefixValid'></td>
+					<td>&nbsp;[600-604800 S]</td>
+				</tr>
+            </table>			
+			</div>
+			<br>
+<!-- //>> [CTFN-IPV6-007] end -->
+            <div id='radvdUlaInfo'>
+	        <table border="0" cellpadding="0" cellspacing="0">
+	        	<tr>
+	              <td >
+	                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='enableRadvdUla' onClick='radvdUlaClick(this)'> Enable ULA Prefix Advertisement
+	              </td>
+                </tr>
+                <tr>
+                   <td colspan="2"><input type='radio' name='RandomUla' onClick='UlatypeClick()'>&nbsp;&nbsp;Randomly Generate</td>
+                </tr>
+                <tr>
+                   <td colspan="2"><input type='radio' name='RandomUla' onClick='UlatypeClick()'>&nbsp;&nbsp;Statically Configure</td>
+                </tr>
+                <table>
+                   <tr>
+                      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Prefix:</td>
+                      <td><input type='text' name='ipv6UlaPrefix'></td>
+                   </tr>
+                </table>
+
+                <table>
+                   <tr>
+                      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preferred Life Time (hour):</td>
+                      <td><input type='text' name='ipv6UlaPlt'></td>
+                   </tr>
+                </table>
+
+                <table>
+                   <tr>
+                      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Valid Life Time (hour):</td>
+                      <td><input type='text' name='ipv6UlaVlt'></td>
+                   </tr>
+                </table>
+
+	        </table>
+	        </div>
+                     <br>
+            <table border="0" cellpadding="0" cellspacing="0">
+               <tr>
+                  <td><input type='checkbox' name='chkMldSnp' onClick='mldClick(this)'>&nbsp;&nbsp;Enable MLD Snooping</td>
+               </tr>
+            </table>
+            <br>
+               <tr>
+                  <tr>
+            <div id='mldSnpInfo'>
+            <table border="0" cellpadding="0" cellspacing="0">
+                     <td colspan="2"><input type='radio' name='mldMode'>&nbsp;&nbsp;Standard Mode</td>
+                  </tr>
+                  <tr>
+                     <td colspan="2"><input type='radio' name='mldMode'>&nbsp;&nbsp;Blocking Mode</td>
+                  </tr>
+               </tr>
+            </table>
+            <br>
+            </div>
+            <center>
+               <input type='button' onClick='btnApply()' value='Save/Apply'>
+            </center>
+         </form>
+      </blockquote>
+   </body>
+</html>

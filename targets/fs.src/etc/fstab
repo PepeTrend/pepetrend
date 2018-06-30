@@ -1,0 +1,8 @@
+proc		/proc	proc	defaults	0	0
+# << [CTFN-3G-001] MHTsai: Support 3G feature, 2010/08/09
+none            /proc/bus/usb             usbfs        defaults   0   0
+/dev/sda1	/mnt	vfat	noauto		0	0
+# >> [CTFN-3G-001] End
+tmpfs		/var	tmpfs	size=420k	0	0
+tmpfs		/mnt	tmpfs	size=16k	0	0
+sysfs		/sys	sysfs	defaults	0	0

@@ -1,0 +1,90 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+
+function btnApply() {
+   var loc = 'staticipneighborcfg.cmd?action=add';
+   with ( document.forms[0] ) {
+
+      var ipv = ipver.options[ipver.selectedIndex].value;
+      var ifc = ifName.options[ifName.selectedIndex].value;
+      loc += '&ipver=' + ipv;
+
+      if (ipv==6 && isValidIpAddress6(IpAddr.value) == false) {
+	      alert( 'Address "' + IpAddr.value + '" is invalid IPv6 address.');
+	      return;
+      }
+      else if (ipv==4 && isValidIpAddress(IpAddr.value) == false) {
+	      alert( 'Address "' + IpAddr.value + '" is invalid IPv4 address.');
+	      return;
+      }
+      else if (isValidMacAddress(MacAddr.value) == false) {
+	      alert( 'Address "' + MacAddr.value + '" is invalid MAC address.');
+	      return;
+      }
+      else if (ifc == ''){
+         alert('Need to specify the interface.');
+         return;
+      }
+      else {
+    	      loc += '&addr=' + IpAddr.value;
+	      loc += '&mac=' + MacAddr.value;
+	      loc += '&ifName=' + ifc;
+            loc += '&sessionKey=<%ejGetOther(sessionKey)%>';
+   	      var code = 'location="' + loc + '"';
+   	      eval(code);
+      }
+   }
+}
+
+// done hiding -->
+</script>
+   </head>
+   <body>
+      <blockquote>
+         <form>
+            <b>Static IP Neighbor Configuration </b><br>
+            <br>
+            <table border="0" cellpadding="0" cellspacing="0">
+               <tr><script language="javascript">
+<!-- hide 
+{
+                  document.writeln("<td width='290'>IP Version:</td>");
+                  document.writeln("<td><select name='ipver' size='1'>");
+                  document.writeln("      <option value='4'>IPv4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                  if ('<%ejGetOther(sysInfo, enblIPv6)%>' == '1')
+                     document.writeln("      <option value='6'>IPv6");
+                  document.writeln("    </select></td>");
+}
+// done hiding -->
+</script></tr>
+               <tr>
+                  <td>IP Address:</td>
+                  <td><input type='text' name='IpAddr'> </td>
+               </tr>
+               <tr>
+                  <td width="180">MAC Address:</td>
+                  <td><input type='text' name='MacAddr'></td>
+               </tr>
+               <tr>
+                  <td width='290'>Associated Interface:</td>
+                  <td><select name='ifName' disabled='disabled'>
+                      <option value='br0' >LAN/br0 
+                  </select></td>
+               </tr>
+            </table>
+            <br>
+            <br>
+            <center>
+               <input type='button' onClick='btnApply()' value='Apply/Save'>
+            </center>
+         </form>
+      </blockquote>
+   </body>
+</html>
+

@@ -1,0 +1,36 @@
+#/dev/ttyUSB0
+#460800
+#connect '/bin/chat -v -t6 -f /etc/ppp/chat-gprs'
+#defaultroute
+#usepeerdns
+#noauth
+#debug
+#noccp
+#updetach
+#lock
+#noipdefault
+#nopcomp
+#lcp-echo-interval 5
+#lcp-echo-failure 12
+#holdoff 3
+#noaccomp noccp nobsdcomp nodeflate nopcomp novj novjccomp
+#ocrtscts
+-detach
+lcp-echo-failure 12
+lcp-echo-interval 5
+/dev/ttyUSB0
+460800
+debug
+defaultroute
+usepeerdns
+persist
+holdoff 30
+ipcp-max-failure 4
+ipcp-accept-local
+ipcp-accept-remote
+noauth
+crtscts
+lock
+connect '/bin/chat -v -t6 -f /etc/ppp/chat-3g'
+
+

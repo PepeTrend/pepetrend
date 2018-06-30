@@ -1,0 +1,23 @@
+# ctconfig : The Comtrend exported variables file.
+#            This file will be included in make.common
+
+
+# Build user applications depending on if they are
+# specified in the profile
+
+BRCM_MAINVERSION=$(BRCM_VERSION)$(BRCM_RELEASE)
+
+###########################################
+#
+# System-wide exported variables
+#
+###########################################
+export CTCONFIG_PRODUCT_MODEL CTCONFIG_SWHW_VERSION BRCM_MAINVERSION \
+       CTCONFIG_CUSTOMER_ABBREVIATION CTCONFIG_RELEASE_VERSION \
+       CTCONFIG_3G_FEATURE
+
+###########################################
+#
+# Miscellaneous Tools
+#
+###########################################

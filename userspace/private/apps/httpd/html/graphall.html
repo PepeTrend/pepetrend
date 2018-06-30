@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01//EN' 'http://www.w3.org/TR/html4/strict.dtd'>
+<html>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>DSL Line Statistics</title> 
+<link rel="stylesheet" href='stylemain.css' type='text/css'>
+        <script src='amcharts.js' type='text/javascript'></script>
+        <script src='raphael.js' type='text/javascript'></script>        
+	    
+        <script type='text/javascript'>
+
+        var chart;
+        var chartData = [];
+		var newValueAxis;
+		var addAxis;
+		var removeAxis;
+			var graph1 = new AmCharts.AmGraph();
+			var graph2 = new AmCharts.AmGraph();
+			var graph3 = new AmCharts.AmGraph();
+			var graph4 = new AmCharts.AmGraph();
+
+        window.onload = function() {
+		 	generateChartData();
+
+			chart = new AmCharts.AmSerialChart();
+			chart.pathToImages = 'amcharts/javascript/images/';
+			chart.pathToImages = 'amcharts/javascript/images/';
+			chart.marginTop = 15;
+			chart.marginLeft = 140;
+			chart.marginRight = 140;
+			chart.dataProvider = chartData;
+			chart.categoryField = 'tone';
+
+			var valAxis1 = new AmCharts.ValueAxis();
+//			valAxis1.axisColor = '#FFFFFF';
+			valAxis1.axisThickness = 2;
+			chart.addValueAxis(valAxis1);
+
+			graph1.valueAxis = valAxis1;
+			graph1.title = 'Bits';
+			graph1.valueField = 'bits';
+			graph1.type = 'smoothedLine';
+			graph1.bullet = 'round';
+			graph1.hideBulletsCount = 30;
+            graph1.lineColor = "#0000FF";
+			//chart.addGraph(graph1);
+/*
+			var valAxis2 = new AmCharts.ValueAxis();
+			valAxis2.offset = 60;
+			valAxis2.axisColor = '#FCD202';
+			valAxis2.gridAlpha = 0;
+			valAxis2.axisThickness = 2;
+			chart.addValueAxis(valAxis2);
+*/
+			graph2.valueAxis = valAxis1;
+			graph2.title = 'SNR';
+			graph2.valueField = 'snr';
+			graph2.type = 'smoothedLine';
+			graph2.bullet = 'square';
+			graph2.hideBulletsCount = 30;
+            graph2.lineColor = "#FF0000";
+			//chart.addGraph(graph2);
+/*
+			valAxis3 = new AmCharts.ValueAxis();
+			valAxis3.position = 'right';
+			valAxis3.gridAlpha = 0;
+			valAxis3.axisColor = '#B0DE09';
+			valAxis3.axisThickness = 2;
+			chart.addValueAxis(valAxis3);
+*/
+			graph3.valueField = 'qln';
+			graph3.title = 'QLN';
+			graph3.bullet = 'triangleUp';
+			graph3.hideBulletsCount = 30;
+			graph3.type = 'smoothedLine';
+			graph3.valueAxis = valAxis1;
+            graph3.lineColor = "#00CD00";
+			//chart.addGraph(graph3);
+/*			
+			valAxis4 = new AmCharts.ValueAxis();
+			valAxis4.offset = 60;
+			valAxis4.gridAlpha = 0;
+			valAxis4.position = 'right';
+			valAxis4.axisColor = '#cc9966';
+			valAxis4.axisThickness = 2;
+			chart.addValueAxis(valAxis4);
+*/
+			graph4.valueField = 'hlog';
+			graph4.title = 'Hlog';
+			graph4.bullet = 'triangleUp';
+			graph4.hideBulletsCount = 30;
+			graph4.type = 'smoothedLine';
+			graph4.valueAxis = valAxis1;			
+            graph4.lineColor = "#F87217";
+			//chart.addGraph(graph4);
+
+			//<< Joba Yang fix TRAC#4265: In ADSL graph page, if user select "filled" button, blue part (Bits) will not display completely. 
+			chart.addGraph(graph2);
+			chart.addGraph(graph1);
+			chart.addGraph(graph3);
+			chart.addGraph(graph4);
+			//>> Joba Yang fix TRAC#4265: In ADSL graph page, if user select "filled" button, blue part (Bits) will not display completely. 
+			
+			var chartCursor = new AmCharts.ChartCursor();
+			chartCursor.cursorColor='#6698FF';
+            chart.addChartCursor(chartCursor);
+
+//			var chartScrollbar = new AmCharts.ChartScrollbar();
+//			chartScrollbar.graph = graph1;
+//			chart.addChartScrollbar(chartScrollbar);
+			
+   			var legend = new AmCharts.AmLegend();			
+   			chart.addLegend(legend);
+
+			chart.write('chartdiv');
+		}
+
+		// generate some random data, quite different range
+		function generateChartData(){
+var tonesvalue = '<%ejGetTest(adslTonesValue)%>';
+var snrvalue='<%ejGetTest(adslSNR)%>';
+var qlnvalue='<%ejGetTest(adslQLN)%>';
+var hlogvalue='<%ejGetTest(adslHlog)%>';
+
+//B=new Array();
+var tmp=tonesvalue.split(',');
+var tmp2=snrvalue.split(',');
+var tmp3=qlnvalue.split(',');
+var tmp4=hlogvalue.split(',');
+
+var length = tmp[0];
+	for (var i=1; i<length; i+=1){  	
+				chartData.push({tone:i, bits:tmp[i], snr:tmp2[i], qln:tmp3[i], hlog:tmp4[i]});
+			}
+		}
+
+
+            function setType()
+            {
+                var newType;
+                if(document.getElementById("rb1").checked)
+                {
+                    newType = "line";
+                graph1.lineAlpha = 1;
+                graph1.fillAlphas = 0;
+                graph2.lineAlpha = 1;
+                graph2.fillAlphas = 0;
+                graph3.lineAlpha = 1;
+                graph3.fillAlphas = 0;
+                graph4.lineAlpha = 1;
+                graph4.fillAlphas = 0;
+                }
+                if(document.getElementById("rb2").checked)
+                {
+                    newType = "smoothedLine";
+                graph1.lineAlpha = 1;
+                graph1.fillAlphas = 0;
+                graph2.lineAlpha = 1;
+                graph2.fillAlphas = 0;
+                graph3.lineAlpha = 1;
+                graph3.fillAlphas = 0;
+                graph4.lineAlpha = 1;
+                graph4.fillAlphas = 0;
+                }
+                if(document.getElementById("rb3").checked)
+                {
+                    newType = "line";
+                graph1.fillColors ="#0000FF";
+                graph2.fillColor ="#FF0000";
+                graph3.fillColor ="#00CD00";
+                graph4.fillColor = "#F87217";
+                graph3.negativeLineColor = "#00CD00";
+                graph3.negativeFillColors = "#00CD00";
+                graph4.negativeLineColor = "#F87217";
+                graph4.negativeFillColors = "#F87217";
+                graph1.lineAlpha = 0;
+                graph1.fillAlphas = 1;
+                graph2.lineAlpha = 0;
+                graph2.fillAlphas = 1;
+                graph3.lineAlpha = 0;
+                graph3.fillAlphas = 1;
+                graph4.lineAlpha = 0;
+                graph4.fillAlphas = 1;                
+                }
+
+                    graph1.type = newType;
+                    graph2.type = newType;
+                    graph3.type = newType;
+                    graph4.type = newType;
+
+                    chart.validateNow();
+            }
+	    </script>
+
+    </head>
+
+	<body>
+	<center>
+	<h1>DSL Line Statistics</h1>
+		<div id='chartdiv' style='width: 950px; height: 600px;'></div>
+        <input type="radio" name="group" id="rb1" onclick="setType()"> line
+        <input type="radio" checked  name="group" id="rb2" onclick="setType()"> smoothed line        
+        <input type="radio" name="group" id="rb3" onclick="setType()"> filled
+	</center>
+	</body>
+</html>

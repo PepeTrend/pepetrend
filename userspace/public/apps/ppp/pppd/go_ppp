@@ -1,0 +1,8 @@
+#!/bin/sh
+/bin/pppz logfile /var/zaz debug 9  user $1 password $2 dump noipdefault default-asyncmap defaultroute hide-password nodetach mtu 1492 mru 1492 noaccomp nodeflate nopcomp novj novjccomp lcp-echo-interval 20 lcp-echo-failure 4 pty "/sbin/pppoe -p /var/pppoe.conf-pppoe.pid.pppoe -I $3 -T 80 -m 1412" &
+
+##/pppz logfile /var/zaz debug 9  user 87377254@hinet.net password 2igixlal dump noipdefault default-asyncmap defaultroute hide-password nodetach mtu 1492 mru 1492 noaccomp nodeflate nopcomp novj novjccomp lcp-echo-interval 20 lcp-echo-failure 4 pty '/sbin/pppoe -p /var/pppoe.conf-pppoe.pid.pppoe -I eth0 -T 80 -m 1412' &
+#/bin/pppz logfile /var/zaz debug 9  user $1 password $2 dump noipdefault default-asyncmap defaultroute hide-password nodetach mtu 1492 mru 1492 noaccomp nodeflate nopcomp novj novjccomp lcp-echo-interval 20 lcp-echo-failure 4 pty \'/sbin/pppoe -p /var/pppoe.conf-pppoe.pid.pppoe -I $3 -T 80 -m 1412\' &
+#cmd="/bin/pppz logfile /var/zaz debug 9  user $1 password $2 dump noipdefault default-asyncmap defaultroute hide-password nodetach mtu 1492 mru 1492 noaccomp nodeflate nopcomp novj novjccomp lcp-echo-interval 20 lcp-echo-failure 4 pty \'/sbin/pppoe -p /var/pppoe.conf-pppoe.pid.pppoe -I $3 -T 80 -m 1412\' &"
+#echo $cmd
+#$cmd

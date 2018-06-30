@@ -1,0 +1,31 @@
+#ABORT BUSY ABORT 'NO CARRIER' ABORT VOICE ABORT 'NO DIALTONE'
+#ABORT 'NO DIAL TONE' ABORT 'NO ANSWER' ABORT DELAYED
+#ABORT ERROR ABORT BLACKLISTED
+
+#TIMEOUT 5
+#'' ATZ
+#OK-+++\dATH0-OK ATZ
+## \T is the APN, passed from /etc/ppp/peers/gprs
+## This example stores the APN as profile #1 in the phone.
+## The "telephone number", *99***<profile_number>#, is always the same.
+## If you want to store this as profile #2, change 1 to 2 in the
+## following two lines.
+#OK AT+CGDCONT=1,"IP","internet"
+#OK "ATD*99#"
+#CONNECT \d\c
+
+TIMEOUT         10
+ECHO            ON
+ABORT           '\nABORT\r'
+ABORT           '\nERROR\r'
+ABORT           '\nNO ANSWER\r'
+ABORT           '\nNO CARRIER\r'
+ABORT           '\nNO DIALTONE\r'
+ABORT           '\nRINGING\r\n\r\nRINGING\r'
+TIMEOUT         10
+"" ATZ
+TIMEOUT         10
+OK ATQ0V1E1S0=0&C1&D2+FCLASS=0
+OK AT+CGDCONT=1,"IP","internet"
+OK ATD*99#
+CONNECT \c

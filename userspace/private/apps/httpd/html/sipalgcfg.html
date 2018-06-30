@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+    <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript" src="util.js"></script>
+            <script language="javascript">
+<!-- hide
+var mysipalg = "<%ejGet(sipalgEnable)%>";
+
+function btnApply() {
+  var loc = 'sipalgcfg.cgi?';
+
+  with( document.forms[0] ) {
+	if(sipalgEnabled.checked == true)
+	{
+		loc += "sipalgEnable=1";
+	}
+	else
+	{
+		loc += "sipalgEnable=0";
+	}
+  }
+  loc += '&sessionKey=<%ejGetOther(sessionKey)%>';
+  var code = 'location="' + loc + '"';
+  eval(code);
+}
+
+function frmLoad() {
+
+
+}
+
+// done hiding -->
+    </script>
+  </head>
+  <body>
+    <blockquote>
+      <form onLoad='frmLoad()'>
+        <b>SIP ALG settings</b><br><br>
+        This page allows you to enable / disable SIP ALG.<br>
+        <b>NOTE: This configuration doesn't take effect until router is rebooted.</b>
+        <br><br>
+        <script>
+		if(mysipalg == 1)
+			document.writeln("<input type='checkbox' name='sipalgEnabled' checked='checked' > Enable SIP ALG.");
+		else
+			document.writeln("<input type='checkbox' name='sipalgEnabled'> Enable SIP ALG.");
+        </script>
+        <br><br>
+        <center>
+        <input type="button" value="Save" onClick='btnApply()'>
+        </center>
+      </form>
+    </blockquote>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<html>
+   <head>
+      <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
+      <link rel="stylesheet" href='stylemain.css' type='text/css'>
+         <link rel="stylesheet" href='colors.css' type='text/css'>
+            <script language="javascript">
+<!-- hide
+
+function backupClick() {
+   var loc = 'backuprom.rom';
+
+   var code = 'location="' + loc + '"';
+   eval(code);
+}
+
+function wfiClick() {
+   var loc = 'backupwfi.rom';
+
+   var code = 'location="' + loc + '"';
+   eval(code);
+}
+
+function modeClick() {
+   with ( document.forms[0] ) {
+      if (mode[0].checked == true )
+      {
+         block.disabled = 1;
+      }
+      else
+      {
+         block.disabled = 0;
+      }
+   }
+}
+
+function nandflashClick() {
+   with ( document.forms[0] ) {
+      var loc = 'backupnandflash.rom';
+
+      if (mode[0].checked == false )
+      {
+         loc += '?block=' + block.value;
+      }
+
+      var code = 'location="' + loc + '"';
+      eval(code);
+   }
+}
+var NandFlash = '<%ejGetOther(sysInfo, NandFlash)%>';
+
+// done hiding -->
+</script>
+   </head>
+   <body>
+      <blockquote>
+         <form>
+         <script language="javascript">
+         if(NandFlash == '0')
+         {
+            document.writeln("            <b>Backup Rom File</b><br>");
+            document.writeln("            <br>");
+            document.writeln("            Backup Broadband Router Rom File. You may save your router flash content to a file on your ");
+            document.writeln("            PC.<br>");
+            document.writeln("            <br>");
+            document.writeln("            <br>");
+            document.writeln("            <p align='center'><input type='button' value='Backup Rom' onClick='backupClick()'></p>");
+            document.writeln("            <hr><br><br>");
+            document.writeln("            <b>Backup Whole Flash Image</b><br>");
+            document.writeln("            <br>");
+            document.writeln("            Backup Broadband Router Whole Flash Image. You may save your router flash content to a file on your");
+            document.writeln("            PC.<br>");
+            document.writeln("            <br>");
+            document.writeln("            <br>");
+            document.writeln("            <p align=center'><input type='button' value='Backup Whole Flash Image' onClick='wfiClick()'></p>");
+         }
+         else
+         {
+            document.writeln("            <b>Backup NAND Flash Image</b><br>");
+            document.writeln("            <br>");
+            document.writeln("            Backup Broadband Router NAND Flash Image. You may save your router flash content to a file on your PC.<br>");
+            document.writeln("            <br>");
+            document.writeln("            ");
+            document.writeln("            <%ejGet(nandflashInfo)%>");
+            document.writeln("            ");
+            document.writeln("            <table border='0' cellpadding='0' cellspacing='0'>");
+            document.writeln("            <tr>");
+            document.writeln("                <td><input name='mode' type='radio' onClick='modeClick()' checked=true>Whole Image</td>");
+            document.writeln("            </tr>");
+            document.writeln("            <tr>");
+            document.writeln("                <td><input name='mode' type='radio' onClick='modeClick()'>Specify Block</td>");
+            document.writeln("                <td>&nbsp;<input name='block' type='text' size='8'></td>");
+            document.writeln("            </tr>");
+            document.writeln("            </table>");
+            document.writeln("            ");
+            document.writeln("            <p align='center'><input type='button' value='Backup NAND Flash Image' onClick='nandflashClick()'></p>");
+            document.writeln("            ");
+            document.writeln("            ");
+            document.writeln("            ");
+            document.writeln("            ");
+         }
+         </script>
+         </form>
+      </blockquote>
+   </body>
+</html>
