@@ -2273,9 +2273,7 @@ LcpSendEchoRequest (f)
     fsm *f;
 {
     u_int32_t lcp_magic;
-//<< [JAZ-LCP] Add some extra bytes to LCP Echo Requests, 20120111
-    u_char pkt[8], *pktp;
-//>> [JAZ-LCP] End
+    u_char pkt[4], *pktp;
 
     /*
      * Detect the failure of the peer at this point.
@@ -2294,13 +2292,6 @@ LcpSendEchoRequest (f)
         lcp_magic = lcp_gotoptions[f->unit].magicnumber;
         pktp = pkt;
         PUTLONG(lcp_magic, pktp);
-//<< [JAZ-LCP] Add some extra bytes to LCP Echo Requests, 20120111
-        /* Some BRASes in the Jazztel network seem to have a hard time
-         * encapsulating small packets in ATM cells (see CSP#327498)
-         */
-        lcp_magic = lcp_hisoptions[f->unit].magicnumber;
-        PUTLONG(lcp_magic, pktp);
-//>> [JAZ-LCP] End
         fsm_sdata(f, ECHOREQ, lcp_echo_number++ & 0xFF, pkt, pktp - pkt);
         ++lcp_echos_pending;
     }
