@@ -295,7 +295,7 @@ COMPRESSED_CONFIG_FILE=y
 BUILD_IPPD=dynamic
 BUILD_DLNA=y
 # BUILD_CERT is not set
-BRCM_DEFAULTCFG=""
+BRCM_DEFAULTCFG="VR-3032u_PEPETREND.conf"
 
 #
 # Management Protocols and User Interface Selection
