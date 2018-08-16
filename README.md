@@ -18,7 +18,7 @@ The final image is located in the **`images`** subdirectory. This image can be l
 Besides, if you don't want to compile the code by yourself, you can check **`firmwares`** directory for latest *PepeTrend* builds.
 
 ---
-### Latest releases
+### LATEST RELEASES
 #### VR-3032u:
 [**VR-3032u-VA31-412PEPETREND-C03_R01p01.bin**](https://github.com/PepeTrend/pepetrend/raw/master/firmwares/VR-3032u-VA31-412PEPETREND-C03_R01p01.bin)
 
@@ -27,7 +27,12 @@ Besides, if you don't want to compile the code by yourself, you can check **`fir
 **`sha256sum: 777eccc7ddb6c58701047335e4ed777bdb40d5b99879c076be695af678610759`**
 
 
-#### AR-5315u: Work in progress.
+#### AR-5315u:
+[**AR-5315u-UC31-412PEPETREND-C01_R05p01.bin**](https://github.com/PepeTrend/pepetrend/raw/master/firmwares/AR-5315u-UC31-412PEPETREND-C01_R05p01.bin)
+
+**`md5sum: 4ea19d293313dc10cf31de7544074f81`**
+
+**`sha256sum: 45c92f715bdb85989a229b6ac4e0c4905919bd45953db404168e64318501050c`**
 
 ---
 ### TOOLCHAIN
