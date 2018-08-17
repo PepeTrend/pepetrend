@@ -1,7 +1,7 @@
 # pepetrend
-## Firmwares for Comtrend routers (VR-3032u/AR-5315u, formerly deployed by Jazztel) compatible with Pepephone and MasMovil xDSL lines. 
+## Firmwares for Comtrend routers (VR-3032u/AR-5315u/AR-5387un, formerly deployed by Jazztel) compatible with Pepephone and MasMovil xDSL lines. 
 
-This project contains all files needed to build a BCM963xx-based Comtrend xDSL Router image (VR-3032u/AR-5315u), except toolchain. For **toolchain**, please consult the **`TOOLCHAIN`** section below.
+This project contains all files needed to build a BCM963xx-based Comtrend xDSL Router image (VR-3032u/AR-5315u/AR-5387un), except toolchain. For **toolchain**, please consult the **`TOOLCHAIN`** section below.
 
 To build an image, enter:
 ```sh
@@ -16,6 +16,10 @@ $ make PROFILE=VR-3032u-PEPETREND
 The final image is located in the **`images`** subdirectory. This image can be loaded into the router using the Web interface image upgrade item.
 
 Besides, if you don't want to compile the code by yourself, you can check **`firmwares`** directory for latest *PepeTrend* builds.
+
+Default settings:
+- http://192.168.1.1
+- User accounts: **admin**/admin, **support**/support, **user**/user. (WARNING: Don't forget to change the password for ALL these accounts in case you open Web/Telnet ports in the firewall for remote management from the Internet!).
 
 ---
 ### LATEST RELEASES
@@ -33,6 +37,15 @@ Besides, if you don't want to compile the code by yourself, you can check **`fir
 **`md5sum: 4ea19d293313dc10cf31de7544074f81`**
 
 **`sha256sum: 45c92f715bdb85989a229b6ac4e0c4905919bd45953db404168e64318501050c`**
+
+
+#### AR-5387un:
+[**AR-5387un-A731-412PEPETREND-C06_R08p01.bin**](https://github.com/PepeTrend/pepetrend/raw/master/firmwares/AR-5387un-A731-412PEPETREND-C06_R08p01.bin)
+
+**`md5sum: 721f18ffeca0c4de11741db3e60f7f0a`**
+
+**`sha256sum: 9313aea0e0d3e46698b9239a8ddea62d9920e165491afca6d3273639c37c76da`**
+
 
 ---
 ### TOOLCHAIN
